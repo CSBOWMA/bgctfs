@@ -1,0 +1,8 @@
+A beginner difficulty crypto CTF
+
+The oracle will take 16 hex digits as input and encrypt it using a single pad
+XOR cipher with the key being the flag.
+
+Designed to show that even with a single pad and random text,
+encryption can still be weak if the user can test on it and
+the encryption algorithm is insecure.
