@@ -1,9 +1,7 @@
 A beginner difficulty crypto CTF
 
-The user must guess the encrypted plaintext
-that is encrypted using a single pad xor cypher.
-They are able to test up to two strings against the key 
-to guess the plaintext. 
+The oracle will take 16 hex digits as input and encrypt it using a single pad
+XOR cipher with the key being the flag.
 
 Designed to show that even with a single pad and random text,
 encryption can still be weak if the user can test on it and

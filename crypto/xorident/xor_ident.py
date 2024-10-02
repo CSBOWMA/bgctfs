@@ -15,14 +15,15 @@ def intro(conn: socket.socket):
 
 def game(plaintext: bytes, conn: socket.socket):
     for i in range(3):
-        sendstr = "(" + chr(i+49) + "/3) >>> "
+        sendstr = "(" + chr(i+ord('1')) + "/3) >>> "
         conn.sendall(sendstr.encode())
         rec_text = conn.recv(128)[:-1].decode()
-        if len(rec_text) != 8:
-            conn.sendall(b"Length 8 required.\n\n")
+        if len(rec_text) != 16:
+            conn.sendall(b"Length 16 required.\n\n")
             continue
         # get rid of bytes from hex to make them use a program?
-        enc_text = long_to_bytes(bytes_to_long(bytes.fromhex(rec_text)) ^ bytes_to_long(plaintext))
+        enc_text = (bytes_to_long(bytes.fromhex(rec_text)) ^ bytes_to_long(plaintext)).to_bytes(8, 'big')
+        print(enc_text)
         if enc_text == plaintext:
             sendstr = b"That encrypts to the key: " + plaintext.hex().encode()
             sendstr += b"\nSo the flag is: bgctf{" + plaintext.hex().encode() + b"}\n"
@@ -34,7 +35,7 @@ def game(plaintext: bytes, conn: socket.socket):
             sendstr = b"Wrong that encrypts to " + enc_text.hex().encode() + b"\n"
             conn.sendall(sendstr)
 
-    conn.sendstr(b'You failed.\n')
+    conn.sendall(b'You failed.\n')
     conn.shutdown(socket.SHUT_RDWR)
     conn.close()
     return
