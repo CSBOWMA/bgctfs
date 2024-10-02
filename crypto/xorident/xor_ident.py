@@ -5,8 +5,9 @@ from Crypto.Util.number import bytes_to_long
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 5001
 ADDR = (HOST, PORT)
-TEXTSIZE = 16
+TEXTSIZE = 8
 
+FLAG = open("./FLAG", "rb").read()
 
 def intro(conn: socket.socket):
     sendstr = "I am the Oracle. I will encrypt anything you send me (16 characters) with my (super) secure XOR cipher. The key is the flag!\n"
@@ -18,10 +19,10 @@ def game(plaintext: bytes, conn: socket.socket):
         sendstr = "(" + chr(i+ord('1')) + "/3) >>> "
         conn.sendall(sendstr.encode())
         rec_text = conn.recv(128)[:-1].decode()
-        if len(rec_text) != 16:
-            conn.sendall(b"Length 16 required.\n\n")
+        if len(rec_text) != TEXTSIZE:
+            conn.sendall(b"Length " + str(TEXTSIZE).encode() + b" required.\n\n")
             continue
-        enc_text = (bytes_to_long(bytes.fromhex(rec_text)) ^ bytes_to_long(plaintext)).to_bytes(8, 'big')
+        enc_text = (bytes_to_long(bytes.fromhex(rec_text)) ^ bytes_to_long(plaintext)).to_bytes(TEXTSIZE//2, 'big')
         if enc_text == plaintext:
             sendstr = b"That encrypts to: " + plaintext.hex().encode() + b". Which is the key!\n"
             sendstr += b"\nSo the flag is: bgctf{" + plaintext.hex().encode() + b"}\n"
@@ -43,7 +44,7 @@ def startGame(conn: socket.socket, addr: str):
     print(f"connection from: {addr}")
     
     intro(conn)
-    game(urandom(8), conn)
+    game(FLAG, conn)
 
     return
 
