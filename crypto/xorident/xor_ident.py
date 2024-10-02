@@ -3,7 +3,7 @@ from os import urandom
 from Crypto.Util.number import long_to_bytes, bytes_to_long
 
 HOST = socket.gethostbyname(socket.gethostname())
-PORT = 3001
+PORT = 5001
 ADDR = (HOST, PORT)
 TEXTSIZE = 16
 
