@@ -1,6 +1,6 @@
-import socket, random, threading
+import socket, threading
 from os import urandom
-from Crypto.Util.number import long_to_bytes, bytes_to_long
+from Crypto.Util.number import bytes_to_long
 
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 5001
@@ -21,11 +21,9 @@ def game(plaintext: bytes, conn: socket.socket):
         if len(rec_text) != 16:
             conn.sendall(b"Length 16 required.\n\n")
             continue
-        # get rid of bytes from hex to make them use a program?
         enc_text = (bytes_to_long(bytes.fromhex(rec_text)) ^ bytes_to_long(plaintext)).to_bytes(8, 'big')
-        print(enc_text)
         if enc_text == plaintext:
-            sendstr = b"That encrypts to the key: " + plaintext.hex().encode()
+            sendstr = b"That encrypts to: " + plaintext.hex().encode() + b". Which is the key!\n"
             sendstr += b"\nSo the flag is: bgctf{" + plaintext.hex().encode() + b"}\n"
             conn.sendall(sendstr)
             conn.shutdown(socket.SHUT_RDWR)
